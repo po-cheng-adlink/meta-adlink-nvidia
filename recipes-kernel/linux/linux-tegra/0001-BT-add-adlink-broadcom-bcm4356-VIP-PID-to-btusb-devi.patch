@@ -1,0 +1,28 @@
+From 2caeca25980378077ecdbbde35a6bba38c902a97 Mon Sep 17 00:00:00 2001
+From: "po.cheng" <po.cheng@adlinktech.com>
+Date: Wed, 28 Apr 2021 12:51:19 +0800
+Subject: [PATCH] BT: add adlink broadcom bcm4356 VIP/PID to btusb device id
+ table
+
+Signed-off-by: po.cheng <po.cheng@adlinktech.com>
+---
+ drivers/bluetooth/btusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 0af9ed77a2a7..1e4b958c87b1 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -66,6 +66,9 @@ static struct usb_driver btusb_driver;
+ #define BTUSB_CW6622		0x100000
+ 
+ static const struct usb_device_id btusb_table[] = {
++	/* Broadcom BCM4356, adlink add  */
++	{ USB_DEVICE(0x2b54, 0x5600) },
++
+ 	/* Generic Bluetooth USB device */
+ 	{ USB_DEVICE_INFO(0xe0, 0x01, 0x01) },
+ 
+-- 
+2.25.1
+
