@@ -1,0 +1,26 @@
+From 03d4ff62827e5a82c674078e42493be405506893 Mon Sep 17 00:00:00 2001
+From: "po.cheng" <po.cheng@adlinktech.com>
+Date: Wed, 28 Apr 2021 12:49:41 +0800
+Subject: [PATCH] dtb: include adlink additional dtsi from
+ tegra194-p3668-all-p3509-0000.dts
+
+Signed-off-by: po.cheng <po.cheng@adlinktech.com>
+---
+ .../t19x/jakku/kernel-dts/tegra194-p3668-all-p3509-0000.dts      | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/nvidia/platform/t19x/jakku/kernel-dts/tegra194-p3668-all-p3509-0000.dts b/nvidia/platform/t19x/jakku/kernel-dts/tegra194-p3668-all-p3509-0000.dts
+index b724f6279071..5c7bd615d98e 100644
+--- a/nvidia/platform/t19x/jakku/kernel-dts/tegra194-p3668-all-p3509-0000.dts
++++ b/nvidia/platform/t19x/jakku/kernel-dts/tegra194-p3668-all-p3509-0000.dts
+@@ -16,6 +16,7 @@
+ /dts-v1/;
+ #include "common/tegra194-p3668-common.dtsi"
+ #include "common/tegra194-p3509-0000-a00.dtsi"
++#include "common/tegra194-p3668-all-p3509-0000-nx-dlap301.dtsi"
+ 
+ / {
+ 	nvidia,dtsfilename = __FILE__;
+-- 
+2.25.1
+

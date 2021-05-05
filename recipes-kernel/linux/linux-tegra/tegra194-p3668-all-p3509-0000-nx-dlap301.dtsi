@@ -1,0 +1,108 @@
+/*
+ * Copyright (c) 2020, ADLINKTECH CORPORATION.  All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ */
+//#include <dt-bindings/gpio/tegra194-gpio.h>
+//#include "tegra19x-jetson_xavier_nx_dla301-pinmux.dtsi"
+#include "dt-bindings/input/input.h"
+
+/ {
+	/* disable pwm-fan , due to gpio confict */
+	pwm-fan {
+		status = "disabled";
+	};
+
+	pfsd {
+		pwm_gpio = <&tegra_aon_gpio TEGRA194_AON_GPIO(CC, 1) GPIO_ACTIVE_LOW>;  /* adlink add */
+	};
+
+	/* 8 port ethernet */
+	i2c@31e0000 {
+		status = "okay";
+		rtl8363: rtl8363@5C {
+			status = "disabled";
+			compatible = "realtek,rtl8363";
+			reg = <0x5C>;
+		};
+	};
+
+	/* ADLINK DI/DO */
+	adlink_dio:adlink_dio{
+		compatible = "adlink,adlink-dio";
+		prjName = "m100_nx";
+		disets = <4>;
+		dosets = <4>;
+		outputReverse = <0>; // 0: do not reverse,output 1 , end-point get 1; 1: reverse
+		inputReverse  = <0>; // do not reverse
+
+		DI = <&tegra_aon_gpio TEGRA194_AON_GPIO(CC, 4) 0>, /*218*/
+		     <&tegra_main_gpio TEGRA194_MAIN_GPIO(Q, 3) 0>,/*124*/
+		     <&tegra_main_gpio TEGRA194_MAIN_GPIO(N, 1) 0>,/*228*/
+		     <&tegra_main_gpio TEGRA194_MAIN_GPIO(Q, 6) 0>;/*216*/
+
+		DO = <&tegra_main_gpio TEGRA194_MAIN_GPIO(R, 0) 0>,/*206*/
+		     <&tegra_main_gpio TEGRA194_MAIN_GPIO(S, 4) 0>,/*211*/
+		     <&tegra_main_gpio TEGRA194_MAIN_GPIO(Q, 5) 0>,/*118*/
+		     <&tegra_aon_gpio TEGRA194_AON_GPIO(CC, 2) 0>; /*128*/
+
+		status = "okay";
+	};
+
+	serial@3100000 {
+		pinctrl-names = "default";
+		pinctrl-0 = <&uarta_default>;
+		status = "okay";
+	};
+
+	pinmux@2430000 {
+		uarta_default: uarta-default{
+
+			/* UART1 */
+			uart1_tx_pr2 {
+				nvidia,pins = "uart1_tx_pr2";
+				nvidia,function = "uarta";
+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+				nvidia,io-high-voltage = <TEGRA_PIN_DISABLE>;
+				nvidia,lpdr = <TEGRA_PIN_DISABLE>;
+			};
+
+			uart1_rx_pr3 {
+				nvidia,pins = "uart1_rx_pr3";
+				nvidia,function = "uarta";
+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+				nvidia,io-high-voltage = <TEGRA_PIN_DISABLE>;
+				nvidia,lpdr = <TEGRA_PIN_DISABLE>;
+			};
+
+			uart1_rts_pr4 {
+				nvidia,pins = "uart1_rts_pr4";
+				nvidia,function = "uarta";
+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+				nvidia,lpdr = <TEGRA_PIN_DISABLE>;
+			};
+
+			uart1_cts_pr5 {
+				nvidia,pins = "uart1_cts_pr5";
+				nvidia,function = "uarta";
+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+				nvidia,lpdr = <TEGRA_PIN_DISABLE>;
+			};
+		};
+	};
+};
