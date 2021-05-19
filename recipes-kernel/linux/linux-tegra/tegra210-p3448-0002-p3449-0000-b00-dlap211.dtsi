@@ -1,0 +1,326 @@
+/*
+ * arch/arm64/boot/dts/tegra210-p3448-0002-p3449-0000-b00.dts
+ *
+ * Copyright (c) 2018-2019, NVIDIA CORPORATION.  All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2 of the License.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ */
+#include <dt-bindings/sound/rt5659.h>
+
+/ {
+	model = "ADLINK DLAP211-Nano";
+
+	pcie@1003000 {
+		iommus = <&smmu TEGRA_SWGROUP_AFI>;
+		iommu-map = <0x0 &smmu TEGRA_SWGROUP_AFI 0x1000>;
+		iommu-map-mask = <0x0>;
+	};
+
+	sdhci@700b0400 {
+		bus-width = <4>;
+		cd-inverted;
+		disable-wp;
+		cd-gpios = <&gpio TEGRA_GPIO(Z, 2) 0>;
+		keep-power-in-suspend;
+		nvidia,vmmc-always-on;
+		status = "okay";
+	};
+
+	/delete-node/ leds;
+	cam_i2cmux {
+		/delete-property/ mux-gpios;
+	};
+
+	/* disable pwm-fan , due to didn't use */
+	pwm-fan {
+		status = "disabled";
+	};
+
+	pfsd {
+		/* conflict to SD cd pin */
+		/delete-property/ tach_gpio;
+		/delete-property/ pwm_gpio;
+	};
+
+	/* DLAP-211 RS232/485 MUX */
+	sp339_mode_ctl:sp339_mode_ctl{
+		compatible = "adlink,sp339_mode_ctl";
+		sp339_mode_ctl = <&gpio TEGRA_GPIO(E, 2)  0>,
+				 <&gpio TEGRA_GPIO(Z, 0)  0>;
+
+		/* modectl_gpio_reverse :
+		 *   1: cpu set high, sp339 get low
+		 *   0: cpu set high, sp339 get high
+		 */
+		modectl_gpio_reverse = <1>;
+		status = "okay";
+	};
+
+	bcmdhd_pcie_wlan {
+		compatible = "android,bcmdhd_pcie_wlan";
+		fw_path = "/vendor/firmware/fw_bcmdhd_4356.bin";
+		nv_path = "/vendor/firmware/nvram_4356.txt";
+		status = "okay";
+	};
+
+	i2c@7000c500 {
+		status ="okay";
+		dlap_rt5658: rt5659.1-001a@1a {
+			compatible = "realtek,rt5658";
+			reg = <0x1a>;
+			status = "okay";
+
+			interrupt-parent = <&gpio>;
+			interrupts = <TEGRA_GPIO(H, 4) GPIO_ACTIVE_HIGH>;
+			realtek,ldo1-en-gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_HIGH>;
+
+			//clocks = <&bpmp_clks TEGRA194_CLK_AUD_MCLK>;
+			//clock-names = "mclk";
+
+			/* gpio for jack detection */
+			gpios = <&gpio TEGRA_GPIO(E, 6) GPIO_ACTIVE_LOW>;
+
+			/* refer include/sound/rt5659.h for the values to be used */
+			realtek,jd-src = <RT5659_JD3>; /* RT5659_IN1P */
+			realtek,dmic1-data-pin = <RT5659_DMIC1_NULL>;
+			realtek,dmic2-data-pin = <RT5659_DMIC2_NULL>;
+		};
+	};
+
+	ahub {
+		i2s@702d1300 {
+			pinctrl-names = "dap_active", "dap_inactive";
+			pinctrl-0 = <&i2s4_dap_active_state>;
+			pinctrl-1 = <>;
+			status = "okay";
+		};
+	};
+
+	pinmux@700008d4 {
+		common {
+			spi1_mosi_pc0 {
+				nvidia,pins = "spi1_mosi_pc0";
+				nvidia,function = "spi1";
+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+			};
+
+			spi1_miso_pc1 {
+				nvidia,pins = "spi1_miso_pc1";
+				nvidia,function = "spi1";
+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+			};
+
+			spi1_sck_pc2 {
+				nvidia,pins = "spi1_sck_pc2";
+				nvidia,function = "spi1";
+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+			};
+
+			spi1_cs0_pc3 {
+				nvidia,pins = "spi1_cs0_pc3";
+				nvidia,function = "spi1";
+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+			};
+
+			spi1_cs1_pc4 {
+				nvidia,pins = "spi1_cs1_pc4";
+				nvidia,function = "spi1";
+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+			};
+
+			spi2_mosi_pb4 {
+				nvidia,pins = "spi2_mosi_pb4";
+				nvidia,function = "spi2";
+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+			};
+
+			spi2_miso_pb5 {
+				nvidia,pins = "spi2_miso_pb5";
+				nvidia,function = "spi2";
+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+			};
+
+			spi2_sck_pb6 {
+				nvidia,pins = "spi2_sck_pb6";
+				nvidia,function = "spi2";
+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+			};
+
+			spi2_cs0_pb7 {
+				nvidia,pins = "spi2_cs0_pb7";
+				nvidia,function = "spi2";
+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+			};
+
+			spi2_cs1_pdd0 {
+				nvidia,pins = "spi2_cs1_pdd0";
+				nvidia,function = "spi2";
+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+			};
+
+			uart2_tx_pg0 {
+				nvidia,pins = "uart2_tx_pg0";
+				nvidia,function = "uartb";
+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+			};
+
+			uart2_rx_pg1 {
+				nvidia,pins = "uart2_rx_pg1";
+				nvidia,function = "uartb";
+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+			};
+
+			uart2_rts_pg2 {
+				nvidia,pins = "uart2_rts_pg2";
+				nvidia,function = "uartb";
+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+			};
+
+			uart2_cts_pg3 {
+				nvidia,pins = "uart2_cts_pg3";
+				nvidia,function = "uartb";
+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+			};
+
+			aud_mclk_pbb0 {
+				nvidia,pins = "aud_mclk_pbb0";
+				nvidia,function = "aud";
+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+			};
+		};
+
+		i2s4_dap_active_state: i2s4_dap_active_state {
+			dap4_fs_pj4 {
+				nvidia,pins = "dap4_fs_pj4";
+				nvidia,function = "i2s4b";
+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+				nvidia,lpdr = <TEGRA_PIN_DISABLE>;
+				status = "okay";
+			};
+
+			dap4_din_pj5 {
+				nvidia,pins = "dap4_din_pj5";
+				nvidia,function = "i2s4b";
+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+				nvidia,lpdr = <TEGRA_PIN_DISABLE>;
+				status = "okay";
+			};
+
+			dap4_dout_pj6 {
+				nvidia,pins = "dap4_dout_pj6";
+				nvidia,function = "i2s4b";
+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+				nvidia,lpdr = <TEGRA_PIN_DISABLE>;
+				status = "okay";
+			};
+
+			dap4_sclk_pj7 {
+				nvidia,pins = "dap4_sclk_pj7";
+				nvidia,function = "i2s4b";
+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+				nvidia,lpdr = <TEGRA_PIN_DISABLE>;
+				status = "okay";
+			};
+		};
+	};
+};
+
+&tegra_sound {
+	status = "okay";
+	nvidia,num-codec-link = <1>;
+	compatible = "nvidia,tegra-audio-t210ref-mobile-rt565x";
+	nvidia,model = "tegra-snd-t210ref-mobile-rt565x";
+
+	clocks = <&tegra_car TEGRA210_CLK_PLL_A>,
+		 <&tegra_car TEGRA210_CLK_PLL_A_OUT0>,
+		 <&tegra_car TEGRA210_CLK_EXTERN1>;
+	clock-names = "pll_a", "pll_a_out0", "extern1";
+	assigned-clocks = <&tegra_car TEGRA210_CLK_EXTERN1>,
+			  <&tegra_car TEGRA210_CLK_PLL_A_OUT0>,
+			  <&tegra_car TEGRA210_CLK_PLL_A>;
+	assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_A_OUT0>;
+	assigned-clock-rates = <12288000>, <49152000>, <368640000>;
+
+	nvidia,audio-routing =
+		"x Headphone Jack",     "x HPO L Playback",
+		"x Headphone Jack",     "x HPO R Playback",
+		"x IN1P",               "x Mic Jack";
+
+	mclk-fs = <256>;
+	rt565x_dai_link: nvidia,dai-link-1 {
+		link-name = "rt565x-playback";
+		codec-dai = <&dlap_rt5658>;
+		codec-dai-name = "rt5659-aif1";
+		cpu-dai = <&tegra_i2s4>;
+		cpu-dai-name = "I2S4";
+		format = "i2s";
+		bit-format = "s16_le";
+		bclk_ratio = <1>;
+		srate = <48000>;
+		num-channel = <2>;
+		ignore_suspend;
+
+		name-prefix = "x";
+		status = "okay";
+	};
+
+	/delete-node/ nvidia,dai-link-2;
+	/delete-node/ nvidia,dai-link-3;
+	/delete-node/ nvidia,dai-link-4;
+	/delete-node/ nvidia,dai-link-5;
+	/delete-node/ nvidia,dai-link-6;
+	/delete-node/ nvidia,dai-link-7;
+	/delete-node/ nvidia,dai-link-8;
+	/delete-node/ nvidia,dai-link-9;
+	/delete-node/ nvidia,dai-link-10;
+};

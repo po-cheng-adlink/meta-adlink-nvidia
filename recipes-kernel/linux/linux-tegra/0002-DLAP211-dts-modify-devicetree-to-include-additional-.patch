@@ -1,0 +1,174 @@
+From c439648a7bd9d87c136ebb7b06859304cc6fc902 Mon Sep 17 00:00:00 2001
+From: Po Yen Cheng <pycheng@smileyfish.co.uk>
+Date: Wed, 19 May 2021 17:24:42 +0800
+Subject: [PATCH 2/2] [DLAP211] dts: modify devicetree to include additional
+ dtsi file and gpio controls
+
+Signed-off-by: Po Yen Cheng <pycheng@smileyfish.co.uk>
+---
+ .../tegra210-porg-gpio-p3448-0002-b00.dtsi    | 43 +++++++++++++++++++
+ .../tegra210-porg-pinmux-p3448-0002-b00.dtsi  | 38 +++++++++++++++-
+ .../tegra210-porg-plugin-manager.dtsi         |  4 +-
+ .../tegra210-p3448-0002-p3449-0000-b00.dts    |  1 +
+ 4 files changed, 84 insertions(+), 2 deletions(-)
+
+diff --git a/nvidia/platform/t210/porg/kernel-dts/porg-platforms/tegra210-porg-gpio-p3448-0002-b00.dtsi b/nvidia/platform/t210/porg/kernel-dts/porg-platforms/tegra210-porg-gpio-p3448-0002-b00.dtsi
+index ac8bda8b57fc9..03bc03c5ada3b 100644
+--- a/nvidia/platform/t210/porg/kernel-dts/porg-platforms/tegra210-porg-gpio-p3448-0002-b00.dtsi
++++ b/nvidia/platform/t210/porg/kernel-dts/porg-platforms/tegra210-porg-gpio-p3448-0002-b00.dtsi
+@@ -24,6 +24,48 @@
+ 		gpio-init-names = "default";
+ 		gpio-init-0 = <&gpio_default>;
+ 
++#if 1
++// dlap211
++		gpio_default: default {
++			gpio-input = <
++				TEGRA_GPIO(E, 0)
++				TEGRA_GPIO(E, 1)
++				TEGRA_GPIO(E, 3)
++				TEGRA_GPIO(E, 6)
++				TEGRA_GPIO(E, 7)
++				TEGRA_GPIO(S, 5)
++				TEGRA_GPIO(A, 5)
++				TEGRA_GPIO(X, 4)
++				TEGRA_GPIO(X, 5)
++				TEGRA_GPIO(X, 6)
++				TEGRA_GPIO(Y, 1)
++				TEGRA_GPIO(Y, 2)
++				TEGRA_GPIO(V, 1)
++				TEGRA_GPIO(Z, 2)
++				TEGRA_GPIO(H, 2)
++				TEGRA_GPIO(H, 5)
++				TEGRA_GPIO(H, 6)
++				TEGRA_GPIO(H, 7)
++				TEGRA_GPIO(I, 0)
++				TEGRA_GPIO(I, 1)
++				TEGRA_GPIO(I, 2)
++				TEGRA_GPIO(CC, 4)
++				>;
++			gpio-output-low = <
++				TEGRA_GPIO(S, 7)
++				TEGRA_GPIO(T, 0)
++				TEGRA_GPIO(Z, 3)
++				TEGRA_GPIO(H, 0)
++				TEGRA_GPIO(H, 3)
++				TEGRA_GPIO(H, 4)
++				>;
++			gpio-output-high = <
++				TEGRA_GPIO(A, 6)
++				TEGRA_GPIO(X, 3)
++				TEGRA_GPIO(CC, 7)
++				>;
++		};
++#else
+ 		gpio_default: default {
+ 			gpio-input = <
+ 				TEGRA_GPIO(BB, 0)
+@@ -77,5 +119,6 @@
+ 				TEGRA_GPIO(CC, 7)
+ 				>;
+ 		};
++#endif
+ 	};
+ };
+diff --git a/nvidia/platform/t210/porg/kernel-dts/porg-platforms/tegra210-porg-pinmux-p3448-0002-b00.dtsi b/nvidia/platform/t210/porg/kernel-dts/porg-platforms/tegra210-porg-pinmux-p3448-0002-b00.dtsi
+index 60e5bb40a826d..bb01c017c1dbd 100644
+--- a/nvidia/platform/t210/porg/kernel-dts/porg-platforms/tegra210-porg-pinmux-p3448-0002-b00.dtsi
++++ b/nvidia/platform/t210/porg/kernel-dts/porg-platforms/tegra210-porg-pinmux-p3448-0002-b00.dtsi
+@@ -670,7 +670,7 @@
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+-
++#if 0
+ 			dap4_din_pj5 {
+ 				nvidia,pins = "dap4_din_pj5";
+ 				nvidia,function = "rsvd1";
+@@ -702,7 +702,43 @@
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
++#else
++			dap4_din_pj5 {
++				nvidia,pins = "dap4_din_pj5";
++				nvidia,function = "i2s4b";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++				nvidia,lpdr = <TEGRA_PIN_DISABLE>;
++			};
++
++			dap4_dout_pj6 {
++				nvidia,pins = "dap4_dout_pj6";
++				nvidia,function = "i2s4b";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++				nvidia,lpdr = <TEGRA_PIN_DISABLE>;
++			};
+ 
++			dap4_fs_pj4 {
++				nvidia,pins = "dap4_fs_pj4";
++				nvidia,function = "i2s4b";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++				nvidia,lpdr = <TEGRA_PIN_DISABLE>;
++			};
++
++			dap4_sclk_pj7 {
++				nvidia,pins = "dap4_sclk_pj7";
++				nvidia,function = "i2s4b";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++				nvidia,lpdr = <TEGRA_PIN_DISABLE>;
++			};
++#endif
+ 			uart2_rts_pg2 {
+ 				nvidia,pins = "uart2_rts_pg2";
+ 				nvidia,function = "rsvd2";
+diff --git a/nvidia/platform/t210/porg/kernel-dts/porg-plugin-manager/tegra210-porg-plugin-manager.dtsi b/nvidia/platform/t210/porg/kernel-dts/porg-plugin-manager/tegra210-porg-plugin-manager.dtsi
+index 93ec6e3876f4a..860c34314b6ec 100644
+--- a/nvidia/platform/t210/porg/kernel-dts/porg-plugin-manager/tegra210-porg-plugin-manager.dtsi
++++ b/nvidia/platform/t210/porg/kernel-dts/porg-plugin-manager/tegra210-porg-plugin-manager.dtsi
+@@ -182,7 +182,7 @@
+ 				target = <&sdhci2>;
+ 				_overlay_ {
+ 					keep-power-in-suspend;
+-					non-removable;
++					//non-removable;
+ 				};
+ 			};
+ 			/* IMX219 single sensor module */
+@@ -566,12 +566,14 @@
+ 						<TEGRA_SOCTHERM_THROT_LEVEL_HIGH>;
+ 				};
+ 			};
++#if 0
+ 			override@3 {
+ 				target = <&{/leds}>;
+ 				_overlay_ {
+ 					status = "okay";
+ 				};
+ 			};
++#endif
+ 		};
+ 	};
+ };
+diff --git a/nvidia/platform/t210/porg/kernel-dts/tegra210-p3448-0002-p3449-0000-b00.dts b/nvidia/platform/t210/porg/kernel-dts/tegra210-p3448-0002-p3449-0000-b00.dts
+index 3b3d5144566da..614098fb530a0 100644
+--- a/nvidia/platform/t210/porg/kernel-dts/tegra210-p3448-0002-p3449-0000-b00.dts
++++ b/nvidia/platform/t210/porg/kernel-dts/tegra210-p3448-0002-p3449-0000-b00.dts
+@@ -21,6 +21,7 @@
+ #include "tegra210-porg-p3448-common.dtsi"
+ #include "porg-platforms/tegra210-porg-pinmux-p3448-0002-b00.dtsi"
+ #include "porg-platforms/tegra210-porg-gpio-p3448-0002-b00.dtsi"
++#include "porg-platforms/tegra210-p3448-0002-p3449-0000-b00-dlap211.dtsi"
+ 
+ / {
+ 	model = "NVIDIA Jetson Nano Developer Kit";
+-- 
+2.25.1
+
