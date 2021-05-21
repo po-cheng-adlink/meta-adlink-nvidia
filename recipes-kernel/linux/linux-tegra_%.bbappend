@@ -11,12 +11,12 @@ do_patch_append_jetson-xavier-nx-devkit () {
 }
 
 
-SRC_URI_append_jetson-nano-devkit = " \
+SRC_URI_append_jetson-nano-devkit-emmc = " \
   file://0002-DLAP211-dts-modify-devicetree-to-include-additional-.patch \
   file://tegra210-p3448-0002-p3449-0000-b00-dlap211.dtsi \
 "
 
-do_patch_append_jetson-nano-devkit () {
+do_patch_append_jetson-nano-devkit-emmc () {
   cp -f ${WORKDIR}/tegra210-p3448-0002-p3449-0000-b00-dlap211.dtsi ${S}/nvidia/platform/t210/porg/kernel-dts/porg-platforms/
 }
 
